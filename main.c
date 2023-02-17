@@ -24,9 +24,6 @@ void ordinal_number(t_list *a, char **ag)
         exit(0);
 }
 
-
-
-
 int   repeating_number(t_list *a)
 {
     t_list *iter;
@@ -37,11 +34,11 @@ int   repeating_number(t_list *a)
     while(iter->next != NULL)
     {
         iter2 = iter->next;  
-        while(iter2->next != NULL)
+        while(iter2)
         {
             if(iter->content == iter2->content)
             {
-                write(1,"Error\n",6);
+                write(2,"Error\n",6);
                 return (1);
             }
             iter2 = iter2->next;
@@ -49,10 +46,9 @@ int   repeating_number(t_list *a)
         iter = iter->next;
         i++;
     }
-    if(i == 1)
-        exit(0);
     return(0);
 }
+
 t_list   *add_a (int ac, char **ag)
 {
     t_list *iter;
@@ -68,14 +64,18 @@ t_list   *add_a (int ac, char **ag)
     iter = list;
     while(++i < ac)
     {
-        kk = atoi_cal_and_che(ag[i]) + 1;
+        kk = atoi_cal_and_che(ag[i]);
         number = ft_atoi(ag[i]);
-        while(--kk > 0)
+        while(kk-- > 0)
         {
             list->content = number[j++];
+            if (i == ac - 1 && kk == 0)
+            {
+                list->next = NULL;
+                break;
+            }
             list->next = (t_list *)malloc(sizeof(t_list));
             list = list->next;
-            list->next = NULL;
         }
         j = 0;
         free(number);
@@ -87,10 +87,11 @@ int main(int ac, char **ag)
 {
     t_list *a;
     t_list *b;
-    b = malloc(sizeof(t_list));
+    t_list *iter;
+    iter = b;
+    b = NULL;
     if(ac <= 1)
         return 0;
-    int i = 0;
 
     a = add_a(ac, ag);
     if(repeating_number(a) == 1)
@@ -99,12 +100,24 @@ int main(int ac, char **ag)
         return (0);
     }
     ordinal_number(a,ag);
-    push_a(&b, &a);
-    system("leaks a.out");
-    while (a->next != NULL)
-    {
-        printf("%d\n",b->content);
-        a = a->next;
-    }
+
+
+    index_finder(&a);
+    a_to_b(&a,&b);
+    b_to_a(&a,&b);
+    // printf("-----MAIN MASS--------\n");
+  
+    // while (a != NULL)
+    // {
+    //     printf("a = %d----->",a->content);
+    //     printf("index = %d\n",a->index);
+    //     a = a->next;
+    // }
+    // while (b != NULL)
+    // {
+    //     printf("b = %d----->",b->content);
+    //     printf("index = %d\n",b->index);
+    //     b = b->next;
+    // }
     return (0);
 }
